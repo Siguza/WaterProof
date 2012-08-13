@@ -66,6 +66,10 @@ public class WPlugin extends JavaPlugin implements Listener
         log.info("Enabling Waterproof " + version);
         upTick = 60 * 60 * 20;
         update = false;
+        waterproof = new int[0];
+        waterbreak = new int[0];
+        lavaproof = new int[0];
+        lavabreak = new int[0];
         checkFiles();
         reloadConfig();
         getServer().getPluginManager().registerEvents(this, this);
