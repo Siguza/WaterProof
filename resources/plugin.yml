@@ -1,0 +1,13 @@
+name: Waterproof
+main: net.drgnome.waterproof.WPlugin
+version: 1.0.0
+author: Siguza
+load: STARTUP
+commands:
+    waterproof:
+        description: Shows the version of WaterProof
+        permissions: waterproof.all
+        usage: /waterproof
+permissions:
+    waterproof.all:
+        decsription: Notifies you of new WaterProof versions and allows you to use the /waterproof command
