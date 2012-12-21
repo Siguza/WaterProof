@@ -1,6 +1,6 @@
 name: Waterproof
 main: net.drgnome.waterproof.WPlugin
-version: 1.0.0
+version: #VERSION#
 author: Siguza
 load: STARTUP
 commands:

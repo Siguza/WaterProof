@@ -32,11 +32,11 @@ import static net.drgnome.waterproof.Util.*;
 
 public class WPlugin extends JavaPlugin implements Listener
 {
-    public static final String version = "1.0.0";
-    private static int waterproof[];
-    private static int waterbreak[];
-    private static int lavaproof[];
-    private static int lavabreak[];
+    public static final String version = "#VERSION#";
+    private static HashMap<Integer, ArrayList<Integer>> waterproof;
+    private static HashMap<Integer, ArrayList<Integer>> waterbreak;
+    private static HashMap<Integer, ArrayList<Integer>> lavaproof;
+    private static HashMap<Integer, ArrayList<Integer>> lavabreak;
     private int upTick;
     private boolean update;
 
@@ -66,14 +66,17 @@ public class WPlugin extends JavaPlugin implements Listener
         log.info("Enabling Waterproof " + version);
         upTick = 60 * 60 * 20;
         update = false;
-        waterproof = new int[0];
-        waterbreak = new int[0];
-        lavaproof = new int[0];
-        lavabreak = new int[0];
+        waterproof = new HashMap<Integer, ArrayList<Integer>>();
+        waterbreak = new HashMap<Integer, ArrayList<Integer>>();
+        lavaproof = new HashMap<Integer, ArrayList<Integer>>();
+        lavabreak = new HashMap<Integer, ArrayList<Integer>>();
         checkFiles();
         reloadConfig();
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new WThread(this), 0L, 1L);
+        if(getConfigString("check-update").equalsIgnoreCase("true"))
+        {
+            getServer().getPluginManager().registerEvents(this, this);
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, new WThread(this), 0L, 1L);
+        }
     }
 
     public void onDisable()
@@ -102,12 +105,12 @@ public class WPlugin extends JavaPlugin implements Listener
         }
     }
     
-    public static int[] getProofList(boolean lava)
+    public static HashMap<Integer, ArrayList<Integer>> getProofList(boolean lava)
     {
         return lava ? WPlugin.lavaproof : WPlugin.waterproof;
     }
     
-    public static int[] getBreakList(boolean lava)
+    public static HashMap<Integer, ArrayList<Integer>> getBreakList(boolean lava)
     {
         return lava ? WPlugin.lavabreak : WPlugin.waterbreak;
     }
@@ -117,10 +120,10 @@ public class WPlugin extends JavaPlugin implements Listener
         super.reloadConfig();
         reloadConf(getConfig());
         saveConfig();
-        WPlugin.waterproof = getConfigIntList("water.proof");
-        WPlugin.waterbreak = getConfigIntList("water.break");
-        WPlugin.lavaproof = getConfigIntList("lava.proof");
-        WPlugin.lavabreak = getConfigIntList("lava.break");
+        WPlugin.waterproof = getConfigMap("water.proof");
+        WPlugin.waterbreak = getConfigMap("water.break");
+        WPlugin.lavaproof = getConfigMap("lava.proof");
+        WPlugin.lavabreak = getConfigMap("lava.break");
     }
     
     private void checkForUpdate()
