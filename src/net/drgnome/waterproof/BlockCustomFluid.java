@@ -5,7 +5,7 @@ package net.drgnome.waterproof;
 
 import java.util.Random;
 
-import net.minecraft.server.*;
+import net.minecraft.server.v#MC_VERSION#.*;
 
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockFromToEvent;
