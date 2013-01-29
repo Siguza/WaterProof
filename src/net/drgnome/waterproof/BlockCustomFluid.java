@@ -4,9 +4,7 @@
 package net.drgnome.waterproof;
 
 import java.util.Random;
-
 import net.minecraft.server.v#MC_VERSION#.*;
-
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockFromToEvent;
 
@@ -14,16 +12,16 @@ import static net.drgnome.waterproof.Util.*;
 
 public class BlockCustomFluid extends BlockFlowing
 {
-    private boolean isLava;
-    private static final int proof[] = new int[]{Block.WOODEN_DOOR.id, Block.IRON_DOOR_BLOCK.id, Block.SIGN_POST.id, Block.LADDER.id, Block.SUGAR_CANE_BLOCK.id};
-    int var1 = 0;
-    boolean var2[] = new boolean[4];
-    int var3[] = new int[4];
-    
-    public BlockCustomFluid(boolean lava)
+    private boolean _isLava;
+    private static final int _proof[] = new int[]{Block.WOODEN_DOOR.id, Block.IRON_DOOR_BLOCK.id, Block.SIGN_POST.id, Block.LADDER.id, Block.SUGAR_CANE_BLOCK.id};
+    int _var1 = 0;
+    boolean _var2[] = new boolean[4];
+    int _var3[] = new int[4];
+
+    protected BlockCustomFluid(boolean isLava)
     {
-        super(lava ? 10 : 8, lava ? Material.LAVA : Material.WATER);
-        if(lava)
+        super(isLava ? 10 : 8, isLava ? Material.LAVA : Material.WATER);
+        if(isLava)
         {
             #FIELD_BLOCK_1#(0.0F);
             #FIELD_BLOCK_2#(1.0F);
@@ -38,29 +36,19 @@ public class BlockCustomFluid extends BlockFlowing
         }
         #FIELD_BLOCK_5#();
         #FIELD_BLOCK_6#();
-        this.isLava = lava;
+        _isLava = isLava;
     }
-    
-    private void extend(World world, int i, int j, int k)
-    {
-        int l = world.getData(i, j, k);
-        world.setRawTypeIdAndData(i, j, k, this.id + 1, l);
-        world.#FIELD_WORLD_1#(i, j, k, i, j, k);
-    }
-    
-    public boolean #FIELD_BLOCK_7#(IBlockAccess iblockaccess, int i, int j, int k)
-    {
-        return this.material != Material.LAVA;
-    }
-    
+
     public void #FIELD_BLOCK_8#(World world, int i, int j, int k, Random random)
     {
+        // CraftBukkit start
         org.bukkit.World bworld = world.getWorld();
         org.bukkit.Server server = world.getServer();
         org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(i, j, k);
-        int l = this.#FIELD_BLOCKFLUIDS_1#(world, i, j, k);
+        // CraftBukkit end
+        int l = this.#FIELD_BLOCKFLUIDS_1#(world, i, j, k); // f_()
         byte b0 = 1;
-        if(this.material == Material.LAVA && !world.worldProvider.#FIELD_WORLDPROVIDER_1#)
+        if(this.material == Material.LAVA && !world.worldProvider.#FIELD_WORLDPROVIDER_1#) // field e
         {
             b0 = 2;
         }
@@ -69,7 +57,7 @@ public class BlockCustomFluid extends BlockFlowing
         if(l > 0)
         {
             byte b1 = -100;
-            this.var1 = 0;
+            _var1 = 0;
             int j1 = this.#FIELD_BLOCKFLOWING_1#(world, i - 1, j, k, b1);
             j1 = this.#FIELD_BLOCKFLOWING_1#(world, i + 1, j, k, j1);
             j1 = this.#FIELD_BLOCKFLOWING_1#(world, i, j, k - 1, j1);
@@ -79,9 +67,9 @@ public class BlockCustomFluid extends BlockFlowing
             {
                 i1 = -1;
             }
-            if(this.#FIELD_BLOCKFLUIDS_1#(world, i, j + 1, k) >= 0)
+            if (this.#FIELD_BLOCKFLUIDS_1#(world, i, j + 1, k) >= 0) // f_()
             {
-                int k1 = this.#FIELD_BLOCKFLUIDS_1#(world, i, j + 1, k);
+                int k1 = this.#FIELD_BLOCKFLUIDS_1#(world, i, j + 1, k); // f_()
                 if(k1 >= 8)
                 {
                     i1 = k1;
@@ -91,7 +79,7 @@ public class BlockCustomFluid extends BlockFlowing
                     i1 = k1 + 8;
                 }
             }
-            if(this.var1 >= 2 && this.material == Material.WATER)
+            if(_var1 >= 2 && this.material == Material.WATER)
             {
                 if(world.getMaterial(i, j - 1, k).isBuildable())
                 {
@@ -111,7 +99,7 @@ public class BlockCustomFluid extends BlockFlowing
             {
                 if(flag)
                 {
-                    this.extend(world, i, j, k);
+                    extend(world, i, j, k);
                 }
             }
             else
@@ -124,16 +112,16 @@ public class BlockCustomFluid extends BlockFlowing
                 else
                 {
                     world.setData(i, j, k, i1);
-                    world.#FIELD_WORLD_2#(i, j, k, this.id, this.#FIELD_BLOCKFLUIDS_2#());
+                    world.#FIELD_WORLD_2#(i, j, k, this.id, this.#FIELD_BLOCKFLUIDS_2#()); // a(), r_()
                     world.applyPhysics(i, j, k, this.id);
                 }
             }
         }
-        else 
+        else
         {
-            this.extend(world, i, j, k);
+            extend(world, i, j, k);
         }
-        if(this.liquidCanDisplaceBlock(world, i, j - 1, k))
+        if(canDisplace(world, i, j - 1, k))
         {
             BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
             if(server != null)
@@ -158,9 +146,9 @@ public class BlockCustomFluid extends BlockFlowing
                 }
             }
         }
-        else if(l >= 0 && (l == 0 || this.blockBlocksFlow(world, i, j - 1, k)))
+        else if(l >= 0 && (l == 0 || solidBlock(world, i, j - 1, k)))
         {
-            boolean[] aboolean = this.getOptimalFlowDirections(world, i, j, k);
+            boolean[] aboolean = getOptimalFlowDirections(world, i, j, k);
             i1 = l + b0;
             if(l >= 8)
             {
@@ -170,7 +158,7 @@ public class BlockCustomFluid extends BlockFlowing
             {
                 return;
             }
-            BlockFace[] faces = new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
+            BlockFace[] faces = new BlockFace[] { BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH };
             int index = 0;
             for(BlockFace currentFace : faces)
             {
@@ -191,9 +179,29 @@ public class BlockCustomFluid extends BlockFlowing
         }
     }
     
-    private void flow(World world, int i, int j, int k, int l)
+    protected int #FIELD_BLOCKFLOWING_1#(World world, int i, int j, int k, int l) // d()
     {
-        if(this.liquidCanDisplaceBlock(world, i, j, k))
+        int i1 = this.#FIELD_BLOCKFLUIDS_1#(world, i, j, k); // f_()
+        if(i1 < 0)
+        {
+            return l;
+        }
+        else
+        {
+            if(i1 == 0)
+            {
+                ++_var1;
+            }
+            if(i1 >= 8)
+            {
+                i1 = 0;
+            }
+            return (l >= 0 && i1 >= l) ? l : i1;
+        }
+    }
+    
+    private void flow(World world, int i, int j, int k, int l) {
+        if(canDisplace(world, i, j, k))
         {
             int i1 = world.getTypeId(i, j, k);
             if(i1 > 0)
@@ -211,7 +219,14 @@ public class BlockCustomFluid extends BlockFlowing
         }
     }
     
-    private int getResistance(World world, int i, int j, int k, int l, int i1)
+    private void extend(World world, int i, int j, int k)
+    {
+        int l = world.getData(i, j, k);
+        world.setRawTypeIdAndData(i, j, k, this.id + 1, l);
+        world.#FIELD_WORLD_1#(i, j, k, i, j, k);
+    }
+
+    private int getResistance(World world, int i, int j, int k, int l, int i1) // d()
     {
         int j1 = 1000;
         for(int k1 = 0; k1 < 4; ++k1)
@@ -224,21 +239,21 @@ public class BlockCustomFluid extends BlockFlowing
                 {
                     l1 = i - 1;
                 }
-                if (k1 == 1)
+                if(k1 == 1)
                 {
                     ++l1;
                 }
-                if (k1 == 2)
+                if(k1 == 2)
                 {
                     i2 = k - 1;
                 }
-                if (k1 == 3)
+                if(k1 == 3)
                 {
                     ++i2;
                 }
-                if(!this.blockBlocksFlow(world, l1, j, i2) && (world.getMaterial(l1, j, i2) != this.material || world.getData(l1, j, i2) != 0))
+                if(!solidBlock(world, l1, j, i2) && (world.getMaterial(l1, j, i2) != this.material || world.getData(l1, j, i2) != 0))
                 {
-                    if(!this.blockBlocksFlow(world, l1, j - 1, i2))
+                    if(!solidBlock(world, l1, j - 1, i2))
                     {
                         return l;
                     }
@@ -255,14 +270,14 @@ public class BlockCustomFluid extends BlockFlowing
         }
         return j1;
     }
-    
-    private boolean[] getOptimalFlowDirections(World world, int i, int j, int k)
+
+    private boolean[] getOptimalFlowDirections(World world, int i, int j, int k) // n()
     {
         int l;
         int i1;
-        for (l = 0; l < 4; ++l)
+        for(l = 0; l < 4; ++l)
         {
-            this.var3[l] = 1000;
+            _var3[l] = 1000;
             i1 = i;
             int j1 = k;
             if(l == 0)
@@ -273,55 +288,60 @@ public class BlockCustomFluid extends BlockFlowing
             {
                 ++i1;
             }
-            if (l == 2)
+            if(l == 2)
             {
                 j1 = k - 1;
             }
-            if (l == 3)
+            if(l == 3)
             {
                 ++j1;
             }
-            if(!this.blockBlocksFlow(world, i1, j, j1) && (world.getMaterial(i1, j, j1) != this.material || world.getData(i1, j, j1) != 0))
+            if(!solidBlock(world, i1, j, j1) && (world.getMaterial(i1, j, j1) != this.material || world.getData(i1, j, j1) != 0))
             {
-                if(this.blockBlocksFlow(world, i1, j - 1, j1))
+                if(solidBlock(world, i1, j - 1, j1))
                 {
-                    this.var3[l] = this.getResistance(world, i1, j, j1, 1, l);
+                    _var3[l] = this.getResistance(world, i1, j, j1, 1, l);
                 }
                 else
                 {
-                    this.var3[l] = 0;
+                    _var3[l] = 0;
                 }
             }
         }
-        l = this.var3[0];
+        l = _var3[0];
         for(i1 = 1; i1 < 4; ++i1)
         {
-            if(this.var3[i1] < l)
+            if(_var3[i1] < l)
             {
-                l = this.var3[i1];
+                l = _var3[i1];
             }
         }
         for(i1 = 0; i1 < 4; ++i1)
         {
-            this.var2[i1] = this.var3[i1] == l;
+            _var2[i1] = _var3[i1] == l;
         }
-        return this.var2;
+        return _var2;
+    }
+
+    private boolean canDisplace(World world, int i, int j, int k) // p()
+    {
+        Material material = world.getMaterial(i, j, k);
+        return ((material == this.material) || (material == Material.LAVA)) ? false : !solidBlock(world, i, j, k);
     }
     
-    // Custom
-    private boolean blockBlocksFlow(World world, int i, int j, int k)
+    private boolean solidBlock(World world, int i, int j, int k) // o()
     {
         int l = world.getTypeId(i, j, k);
         int m = world.getData(i, j, k);
-        if(isBlockInList(WPlugin.getProofList(this.isLava), l, m))
+        if(isBlockInList(WPlugin.getProofList(_isLava), l, m))
         {
             return true;
         }
-        if(isBlockInList(WPlugin.getBreakList(this.isLava), l, m))
+        if(isBlockInList(WPlugin.getBreakList(_isLava), l, m))
         {
             return false;
         }
-        for(int id : proof)
+        for(int id : _proof)
         {
             if(l == id)
             {
@@ -335,47 +355,4 @@ public class BlockCustomFluid extends BlockFlowing
         Material material = Block.byId[l].material;
         return (material == Material.PORTAL) || material.isSolid();
     }
-    
-    protected int #FIELD_BLOCKFLOWING_1#(World world, int i, int j, int k, int l)
-    {
-        int i1 = this.#FIELD_BLOCKFLUIDS_1#(world, i, j, k);
-        if(i1 < 0)
-        {
-            return l;
-        }
-        else
-        {
-            if(i1 == 0)
-            {
-                ++this.var1;
-            }
-            if(i1 >= 8)
-            {
-                i1 = 0;
-            }
-            return l >= 0 && i1 >= l ? l : i1;
-        }
-    }
-    
-    private boolean liquidCanDisplaceBlock(World world, int i, int j, int k)
-    {
-        Material material = world.getMaterial(i, j, k);
-        return ((material == this.material) || (material == Material.LAVA)) ? false : !this.blockBlocksFlow(world, i, j, k);
-    }
-    
-    public void onPlace(World world, int i, int j, int k)
-    {
-        super.onPlace(world, i, j, k);
-        if(world.getTypeId(i, j, k) == this.id)
-        {
-            world.#FIELD_WORLD_2#(i, j, k, this.id, this.#FIELD_BLOCKFLUIDS_2#());
-        }
-    }
-    
-    #COMM_1A#
-    public boolean l()
-    {
-        return false;
-    }
-    #COMM_1B#
 }

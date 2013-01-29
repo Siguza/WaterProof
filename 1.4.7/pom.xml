@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.drgnome.waterproof</groupId>
 	<artifactId>WaterProof</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<name>WaterProof</name>
 	<description>Bukkit Plugin "WaterProof".</description>
 	<url>http://dev.bukkit.org/server-mods/waterproof/</url>
@@ -102,15 +102,6 @@
                                     <value>1_4_R1</value>
                                 </replacement>
                                 <!-- REPLACEMENTS -->
-                                <replacement>
-                                    <token>#COMM_1A#</token>
-                                    <value></value>
-                                </replacement>
-                                <replacement>
-                                    <token>#COMM_1B#</token>
-                                    <value></value>
-                                </replacement>
-                                <!-- Hi there, reader :) -->
                                 <replacement>
                                     <token>#FIELD_BLOCK_1#</token> <!-- (float) -->
                                     <value>c</value>
