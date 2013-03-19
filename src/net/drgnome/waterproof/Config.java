@@ -1,5 +1,5 @@
 // Bukkit Plugin "WaterProof" by Siguza
-// This software is distributed under the following license:
+// The license under which this software is released can be accessed at:
 // http://creativecommons.org/licenses/by-nc-sa/3.0/
 
 package net.drgnome.waterproof;
@@ -7,22 +7,18 @@ package net.drgnome.waterproof;
 import java.util.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.*;
+import static net.drgnome.waterproof.Global.*;
 
-import static net.drgnome.waterproof.Util.*;
-
-// Thought for static import
 public class Config
 {    
-    private static FileConfiguration config;
+    private static FileConfiguration _config;
     
-    // Because reloadConfig is already used
-    public static void reloadConf(FileConfiguration file)
+    public static void reload()
     {
-        config = file;
+        _config = _plugin.getConfig();
         setDefs();
     }
     
-    // Set all default values
     private static void setDefs()
     {
         setDef("check-update", "true");
@@ -36,25 +32,29 @@ public class Config
         setDef("lava.break", new ArrayList<String>());
     }
     
-    // Set a default value
     private static void setDef(String path, Object value)
     {
-        if(!config.isSet(path))
+        if(!_config.isSet(path))
         {
-            config.set(path, value);
+            _config.set(path, value);
         }
     }
     
-    public static String getConfigString(String string)
+    public static boolean bool(String string)
     {
-        return config.getString(string);
+        return string(string).equalsIgnoreCase("true");
     }
     
-    public static HashMap<Integer, ArrayList<Integer>> getConfigMap(String string)
+    public static String string(String string)
+    {
+        return _config.getString(string);
+    }
+    
+    public static HashMap<Integer, ArrayList<Integer>> map(String string)
     {
         try
         {
-            String[] array = config.getStringList(string).toArray(new String[0]);
+            String[] array = _config.getStringList(string).toArray(new String[0]);
             HashMap<Integer, ArrayList<Integer>> map = new HashMap<Integer, ArrayList<Integer>>();
             for(String s : array)
             {
@@ -72,7 +72,7 @@ public class Config
                         Material m = Material.getMaterial(parts[0].toUpperCase());
                         if(m == null)
                         {
-                            log.warning("[Waterproof] Unknown block type: " + parts[0]);
+                            _log.warning("[Waterproof] Unknown block type: " + parts[0]);
                             continue;
                         }
                         else
@@ -86,7 +86,7 @@ public class Config
                     }
                     catch(NumberFormatException e)
                     {
-                        log.warning("[Waterproof] Unknown block metadata: " + parts[1]);
+                        _log.warning("[Waterproof] Unknown block metadata: " + parts[1]);
                         continue;
                     }
                 }
@@ -102,7 +102,7 @@ public class Config
                         Material m = Material.getMaterial(s.toUpperCase());
                         if(m == null)
                         {
-                            log.warning("[Waterproof] Unknown block type: " + s);
+                            _log.warning("[Waterproof] Unknown block type: " + s);
                             continue;
                         }
                         else
@@ -123,29 +123,6 @@ public class Config
                 }
             }
             return map;
-            /*ArrayList<Integer> list = new ArrayList<Integer>();
-            for(Object o : objects)
-            {
-                if(o instanceof Integer)
-                {
-                    list.add((Integer)o);
-                }
-                else if(o instanceof String)
-                {
-                    Material m = Material.getMaterial(((String)o).toUpperCase());
-                    if(m != null)
-                    {
-                        list.add((Integer)(m.getId()));
-                    }
-                }
-            }
-            Integer ints[] = list.toArray(new Integer[0]);
-            int values[] = new int[ints.length];
-            for(int i = 0; i < ints.length; i++)
-            {
-                values[i] = ints[i].intValue();
-            }
-            return values;*/
         }
         catch(Throwable t)
         {

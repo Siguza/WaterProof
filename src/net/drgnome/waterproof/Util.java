@@ -1,20 +1,16 @@
 // Bukkit Plugin "WaterProof" by Siguza
-// This software is distributed under the following license:
+// The license under which this software is released can be accessed at:
 // http://creativecommons.org/licenses/by-nc-sa/3.0/
 
 package net.drgnome.waterproof;
 
-import java.util.logging.Logger;
+import java.io.*;
+import java.net.*;
 import java.util.*;
-
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class Util
 {
-    public static final String LS = System.getProperty("line.separator");
-    public static Logger log = Logger.getLogger("Minecraft");
-    
     public static boolean isBlockInList(HashMap<Integer, ArrayList<Integer>> map, int id, int meta)
     {
         ArrayList<Integer> list = map.get(id);
@@ -25,51 +21,70 @@ public class Util
         return list.contains(meta) || list.contains(-1);
     }
     
-    // These 3 methods split up strings into multiple lines so that the message doesn't get messed up by the minecraft chat.
-    // You can also give a prefix that is set before every line.
-    public static void sendMessage(CommandSender sender, String message)
+    public static boolean hasUpdate(String name, String version)
     {
-        sendMessage(sender, message, "");
-    }
-    
-    public static void sendMessage(CommandSender sender, String message, ChatColor prefix)
-    {
-        sendMessage(sender, message, "" + prefix);
-    }
-    
-    public static void sendMessage(CommandSender sender, String message, String prefix)
-    {
-        if((sender == null) || (message == null))
+        try
         {
-            return;
-        }
-        if(prefix == null)
-        {
-            prefix = "";
-        }
-        int offset = 0;
-        int xpos = 0;
-        int pos = 0;
-        String part;
-        while(true)
-        {
-            if(offset + 60 >= message.length())
+            HttpURLConnection con = (HttpURLConnection)(new URL("http://dev.drgnome.net/version.php?t=" + name)).openConnection();            
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; JVM)");                        
+            con.setRequestProperty("Pragma", "no-cache");
+            con.connect();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line = null;
+            StringBuilder stringb = new StringBuilder();
+            if((line = reader.readLine()) != null)
             {
-                sender.sendMessage(prefix + message.substring(offset, message.length()));
-                break;
+                stringb.append(line);
             }
-            part = message.substring(offset, offset + 60);
-            xpos = part.lastIndexOf(" ");
-            pos = xpos < 0 ? 60 : xpos;
-            part = message.substring(offset, offset + pos);
-            sender.sendMessage(prefix + part);
-            offset += pos + (xpos < 0 ? 0 : 1);
+            String vdigits[] = version.toLowerCase().split("\\.");
+            String cdigits[] = stringb.toString().toLowerCase().split("\\.");
+            int max = vdigits.length > cdigits.length ? cdigits.length : vdigits.length;
+            int a = 0;
+            int b = 0;
+            for(int i = 0; i < max; i++)
+            {
+                try
+                {
+                    a = Integer.parseInt(cdigits[i]);
+                }
+                catch(Throwable t1)
+                {
+                    char c[] = cdigits[i].toCharArray();
+                    for(int j = 0; j < c.length; j++)
+                    {
+                        a += (c[j] << ((c.length - (j + 1)) * 8));
+                    }
+                }
+                try
+                {
+                    b = Integer.parseInt(vdigits[i]);
+                }
+                catch(Throwable t1)
+                {
+                    char c[] = vdigits[i].toCharArray();
+                    for(int j = 0; j < c.length; j++)
+                    {
+                        b += (c[j] << ((c.length - (j + 1)) * 8));
+                    }
+                }
+                if(a > b)
+                {
+                    return true;
+                }
+                else if(a < b)
+                {
+                    return false;
+                }
+                else if((i == max - 1) && (cdigits.length > vdigits.length))
+                {
+                    return true;
+                }
+            }
         }
-    }
-    
-    // Before e.printStackTrace:
-    public static void warn()
-    {
-        log.warning("[WaterProof] AN ERROR OCCURED! PLEASE SEND THE MESSAGE BELOW TO THE DEVELOPER!");
+        catch(Throwable t)
+        {
+        }
+        return false;
     }
 }

@@ -8,8 +8,6 @@ import net.minecraft.server.v#MC_VERSION#.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockFromToEvent;
 
-import static net.drgnome.waterproof.Util.*;
-
 public class BlockCustomFluid extends BlockFlowing
 {
     private boolean _isLava;
@@ -25,7 +23,6 @@ public class BlockCustomFluid extends BlockFlowing
         {
             #FIELD_BLOCK_1#(0.0F);
             #FIELD_BLOCK_2#(1.0F);
-            #FIELD_BLOCK_3#(255);
             #FIELD_BLOCK_4#("lava");
         }
         else
@@ -35,7 +32,6 @@ public class BlockCustomFluid extends BlockFlowing
             #FIELD_BLOCK_4#("water");
         }
         #FIELD_BLOCK_5#();
-        #FIELD_BLOCK_6#();
         _isLava = isLava;
     }
 
@@ -85,7 +81,7 @@ public class BlockCustomFluid extends BlockFlowing
                 {
                     i1 = 0;
                 }
-                else if(world.getMaterial(i, j - 1, k) == this.material && world.getData(i, j, k) == 0)
+                else if(world.getMaterial(i, j - 1, k) == this.material && world.getData(i, j - 1, k) == 0)
                 {
                     i1 = 0;
                 }
@@ -107,12 +103,12 @@ public class BlockCustomFluid extends BlockFlowing
                 l = i1;
                 if(i1 < 0)
                 {
-                    world.setTypeId(i, j, k, 0);
+                    world.setAir(i, j, k);
                 }
                 else
                 {
-                    world.setData(i, j, k, i1);
-                    world.#FIELD_WORLD_2#(i, j, k, this.id, this.#FIELD_BLOCKFLUIDS_2#()); // a(), r_()
+                    world.setData(i, j, k, i1, 2);
+                    world.#FIELD_WORLD_2#(i, j, k, this.id, this.#FIELD_BLOCK_10#(world)); // a(), a()
                     world.applyPhysics(i, j, k, this.id);
                 }
             }
@@ -132,7 +128,7 @@ public class BlockCustomFluid extends BlockFlowing
             {
                 if(this.material == Material.LAVA && world.getMaterial(i, j - 1, k) == Material.WATER)
                 {
-                    world.setTypeId(i, j - 1, k, Block.STONE.id);
+                    world.setTypeIdUpdate(i, j - 1, k, Block.STONE.id);
                     this.fizz(world, i, j - 1, k);
                     return;
                 }
@@ -200,7 +196,8 @@ public class BlockCustomFluid extends BlockFlowing
         }
     }
     
-    private void flow(World world, int i, int j, int k, int l) {
+    private void flow(World world, int i, int j, int k, int l)
+    {
         if(canDisplace(world, i, j, k))
         {
             int i1 = world.getTypeId(i, j, k);
@@ -215,15 +212,13 @@ public class BlockCustomFluid extends BlockFlowing
                     Block.byId[i1].#FIELD_BLOCK_9#(world, i, j, k, world.getData(i, j, k), 0);
                 }
             }
-            world.setTypeIdAndData(i, j, k, this.id, l);
+            world.setTypeIdAndData(i, j, k, this.id, l, 3);
         }
     }
     
     private void extend(World world, int i, int j, int k)
     {
-        int l = world.getData(i, j, k);
-        world.setRawTypeIdAndData(i, j, k, this.id + 1, l);
-        world.#FIELD_WORLD_1#(i, j, k, i, j, k);
+        world.setTypeIdAndData(i, j, k, this.id + 1, world.getData(i, j, k), 2);
     }
 
     private int getResistance(World world, int i, int j, int k, int l, int i1) // d()
@@ -333,11 +328,11 @@ public class BlockCustomFluid extends BlockFlowing
     {
         int l = world.getTypeId(i, j, k);
         int m = world.getData(i, j, k);
-        if(isBlockInList(WPlugin.getProofList(_isLava), l, m))
+        if(WPlugin.check(l, m, true, _isLava))
         {
             return true;
         }
-        if(isBlockInList(WPlugin.getBreakList(_isLava), l, m))
+        if(WPlugin.check(l, m, false, _isLava))
         {
             return false;
         }
