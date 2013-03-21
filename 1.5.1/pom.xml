@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.drgnome.waterproof</groupId>
 	<artifactId>WaterProof</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.6</version>
 	<name>WaterProof</name>
 	<description>Bukkit Plugin "WaterProof".</description>
 	<url>http://dev.bukkit.org/server-mods/waterproof/</url>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
-			<version>1.4.7-R0.2-SNAPSHOT</version>
+			<version>1.5.1-R0.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -99,7 +99,7 @@
                                 </replacement>
                                 <replacement>
                                     <token>#MC_VERSION#</token>
-                                    <value>1_4_R1</value>
+                                    <value>1_5_R2</value>
                                 </replacement>
                                 <!-- REPLACEMENTS -->
                                 <replacement>
@@ -112,19 +112,15 @@
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCK_3#</token> <!-- (int) -->
-                                    <value>h</value>
+                                    <value>k</value>
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCK_4#</token> <!-- (String) -->
-                                    <value>b</value>
+                                    <value>c</value>
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCK_5#</token> <!-- () -->
                                     <value>D</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_6#</token> <!-- () -->
-                                    <value>r</value>
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCK_7#</token> <!-- (IBlockAccess, int, int, int) -->
@@ -132,11 +128,15 @@
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCK_8#</token> <!-- (World, int, int, int, Random) -->
-                                    <value>b</value>
+                                    <value>a</value>
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCK_9#</token> <!-- final (World, int, int, int, int, int) -->
                                     <value>c</value>
+                                </replacement>
+                                <replacement>
+                                    <token>#FIELD_BLOCK_10#</token> <!-- (World) -->
+                                    <value>a</value>
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_WORLD_1#</token> <!-- (int, int, int, int, int, int) -->
@@ -148,11 +148,7 @@
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_BLOCKFLUIDS_1#</token> <!-- (World, int, int, int) -->
-                                    <value>f_</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCKFLUIDS_2#</token> <!-- () -->
-                                    <value>r_</value>
+                                    <value>k_</value>
                                 </replacement>
                                 <replacement>
                                     <token>#FIELD_WORLDPROVIDER_1#</token> <!-- bool -->

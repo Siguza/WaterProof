@@ -1,5 +1,6 @@
 // Bukkit Plugin "WaterProof" by Siguza
-// This file has been copied from the Craftbukkit github page and is released under the same conditions as Bukkit is.
+// The license under which this software is released can be accessed at:
+// http://creativecommons.org/licenses/by-nc-sa/3.0/
 
 package net.drgnome.waterproof;
 
