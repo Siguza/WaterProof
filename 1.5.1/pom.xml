@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.drgnome.waterproof</groupId>
 	<artifactId>WaterProof</artifactId>
-	<version>1.0.6</version>
+	<version>1.1.0</version>
 	<name>WaterProof</name>
 	<description>Bukkit Plugin "WaterProof".</description>
 	<url>http://dev.bukkit.org/server-mods/waterproof/</url>

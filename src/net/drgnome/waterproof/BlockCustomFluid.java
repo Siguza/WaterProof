@@ -204,6 +204,18 @@ public class BlockCustomFluid extends BlockFlowing
             int i1 = world.getTypeId(i, j, k);
             if(i1 > 0)
             {
+                org.bukkit.World bukkitWorld = world.getWorld();
+                org.bukkit.block.Block block = bukkitWorld == null ? null : bukkitWorld.getBlockAt(i, j, k);
+                org.bukkit.Server server = world.getServer();
+                if(server != null)
+                {
+                    SweepAwayEvent event = new SweepAwayEvent(block, _isLava ? SweepAwayEvent.FluidType.LAVA : SweepAwayEvent.FluidType.WATER);
+                    server.getPluginManager().callEvent(event);
+                    if(event.isCancelled() && Config.bool("allow-event-cancel"))
+                    {
+                        return;
+                    }
+                }
                 if(this.material == Material.LAVA)
                 {
                     this.fizz(world, i, j, k);

@@ -22,6 +22,7 @@ public class Config
     private static void setDefs()
     {
         setDef("check-update", "true");
+        setDef("allow-event-cancel", "true");
         ArrayList<String> list = new ArrayList<String>();
         list.add("55");
         list.add("75");
