@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockEvent;
 
 public class SweepAwayEvent extends BlockEvent implements Cancellable
 {
+    private static final HandlerList _handlers = new HandlerList();
     private final FluidType _fluid;
     private boolean _cancelled = false;
     
@@ -23,11 +24,6 @@ public class SweepAwayEvent extends BlockEvent implements Cancellable
     public FluidType getCause()
     {
         return _fluid;
-    }
-    
-    public HandlerList getHandlers()
-    {
-        return new HandlerList();
     }
     
     public boolean isCancelled()
@@ -44,5 +40,15 @@ public class SweepAwayEvent extends BlockEvent implements Cancellable
     {
         WATER,
         LAVA;
+    }
+    
+    public HandlerList getHandlers()
+    {
+        return _handlers;
+    }
+    
+    public static HandlerList getHandlerList()
+    {
+        return _handlers;
     }
 }
