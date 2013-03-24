@@ -1,44 +1,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.drgnome.waterproof</groupId>
-	<artifactId>WaterProof</artifactId>
-	<version>1.1.0</version>
-	<name>WaterProof</name>
-	<description>Bukkit Plugin "WaterProof".</description>
-	<url>http://dev.bukkit.org/server-mods/waterproof/</url>
-	<scm>
-		<url>https://github.com/Siguza/WaterProof</url>
-		<connection>scm:git:git://github.com:Siguza/WaterProof.git</connection>
-		<developerConnection>scm:git:git@github.com:Siguza/WaterProof.git</developerConnection>
-	</scm>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.drgnome.waterproof</groupId>
+    <artifactId>WaterProof</artifactId>
+    <version>1.1.0</version>
+    <name>WaterProof</name>
+    <description>Bukkit Plugin "WaterProof".</description>
+    <url>http://dev.bukkit.org/server-mods/waterproof/</url>
+    <scm>
+        <url>https://github.com/Siguza/WaterProof</url>
+        <connection>scm:git:git://github.com:Siguza/WaterProof.git</connection>
+        <developerConnection>scm:git:git@github.com:Siguza/WaterProof.git</developerConnection>
+    </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-	<repositories>
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
-	</repositories>
-	<dependencies>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>1.5.1-R0.1-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
-	<build>
+    <repositories>
+        <repository>
+            <id>bukkit-repo</id>
+            <url>http://repo.bukkit.org/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.5.1-R0.1-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <build>
         <defaultGoal>clean package</defaultGoal>
         <finalName>${project.artifactId}</finalName>
-		<resources>
-			<resource>
-				<directory>${project.basedir}/../resources</directory>
-			</resource>
-		</resources>
-		<plugins>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/../resources</directory>
+            </resource>
+        </resources>
+        <plugins>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
@@ -195,7 +195,7 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>prepare-package</phase>
+                        <phase>package</phase>
                         <configuration>
                             <tasks>
                                 <delete dir="${project.basedir}/src"/>
@@ -205,8 +205,39 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>copy</id>
+                        <phase>post-site</phase>
+                        <configuration>
+                            <tasks>
+                                <copy todir="/var/www/drgnome/javadoc/waterproof">
+                                    <fileset dir="${project.basedir}/apidocs" includes="**/*" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <outputDirectory>${project.basedir}</outputDirectory>
+                    <reportOutputDirectory>${project.basedir}</reportOutputDirectory>
+                    <links>
+                        <link>http://docs.oracle.com/javase/6/docs/api/</link>
+                        <link>http://jd.bukkit.org/apidocs/</link>
+                    </links>
+                    <sourcepath>${project.basedir}/src/net/drgnome/waterproof</sourcepath>
+                    <sourceFileIncludes>
+                        <include>SweepAwayEvent.java</include>
+                    </sourceFileIncludes>
+                </configuration>
+            </plugin>
         </plugins>
-	</build>
+    </build>
 </project>
