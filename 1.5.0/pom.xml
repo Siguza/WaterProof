@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.drgnome.waterproof</groupId>
 	<artifactId>WaterProof</artifactId>
-	<version>1.0.5</version>
+	<version>1.1.1</version>
 	<name>WaterProof</name>
 	<description>Bukkit Plugin "WaterProof".</description>
 	<url>http://dev.bukkit.org/server-mods/waterproof/</url>
@@ -35,7 +35,7 @@
         <finalName>${project.artifactId}</finalName>
 		<resources>
 			<resource>
-				<directory>${project.basedir}/../resources</directory>
+				<directory>${project.basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
 		<plugins>
@@ -66,22 +66,6 @@
                 <artifactId>replacer</artifactId>
                 <version>1.5.1</version>
                 <executions>
-                    <execution>
-                        <id>herp</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                        <configuration>
-                            <file>target/classes/plugin.yml</file>
-                            <replacements>
-                                <replacement>
-                                    <token>#VERSION#</token>
-                                    <value>${project.version}</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>derp</id>
                         <phase>process-sources</phase>
