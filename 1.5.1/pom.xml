@@ -216,7 +216,7 @@
                         <link>http://docs.oracle.com/javase/6/docs/api/</link>
                         <link>http://jd.bukkit.org/apidocs/</link>
                     </links>
-                    <sourcepath>${project.basedir}/src/net/drgnome/waterproof</sourcepath>
+                    <sourcepath>${project.basedir}/src/main/java/net/drgnome/waterproof</sourcepath>
                     <sourceFileIncludes>
                         <include>SweepAwayEvent.java</include>
                     </sourceFileIncludes>
