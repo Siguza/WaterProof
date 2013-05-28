@@ -23,6 +23,7 @@ public class Config
     {
         setDef("check-update", "true");
         setDef("allow-event-cancel", "true");
+        setDef("allow-water-in-nether", "false");
         ArrayList<String> list = new ArrayList<String>();
         list.add("55");
         list.add("75");

@@ -2,24 +2,33 @@
 // The license under which this software is released can be accessed at:
 // http://creativecommons.org/licenses/by-nc-sa/3.0/
 
-package net.drgnome.waterproof;
+package net.drgnome.waterproof.inject;
 
 import java.util.Random;
 import net.minecraft.server.v#MC_VERSION#.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockFromToEvent;
+import net.drgnome.waterproof.*;
 
 public class BlockCustomFluid extends BlockFlowing
 {
-    private boolean _isLava;
     private static final int _proof[] = new int[]{Block.WOODEN_DOOR.id, Block.IRON_DOOR_BLOCK.id, Block.SIGN_POST.id, Block.LADDER.id, Block.SUGAR_CANE_BLOCK.id};
+    private static final int[] _ids = {8, 10};
+    private final boolean _isLava;
     int _var1 = 0;
     boolean _var2[] = new boolean[4];
     int _var3[] = new int[4];
+    
+    public static void inject()
+    {
+        Block.byId[_ids[0]] = Block.byId[_ids[1]] = null;
+        new BlockCustomFluid(false);
+        new BlockCustomFluid(true);
+    }
 
     protected BlockCustomFluid(boolean isLava)
     {
-        super(isLava ? 10 : 8, isLava ? Material.LAVA : Material.WATER);
+        super(isLava ? _ids[1] : _ids[0], isLava ? Material.LAVA : Material.WATER);
         if(isLava)
         {
             #FIELD_BLOCK_1#(0.0F);
@@ -125,7 +134,7 @@ public class BlockCustomFluid extends BlockFlowing
             {
                 server.getPluginManager().callEvent(event);
             }
-            if(!event.isCancelled())
+            if(!event.isCancelled() || !Config.bool("allow-event-cancel"))
             {
                 if(this.material == Material.LAVA && world.getMaterial(i, j - 1, k) == Material.WATER)
                 {
@@ -166,7 +175,7 @@ public class BlockCustomFluid extends BlockFlowing
                     {
                         server.getPluginManager().callEvent(event);
                     }
-                    if(!event.isCancelled())
+                    if(!event.isCancelled() || !Config.bool("allow-event-cancel"))
                     {
                         this.flow(world, i + currentFace.getModX(), j, k + currentFace.getModZ(), i1);
                     }

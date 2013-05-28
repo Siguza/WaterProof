@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.drgnome.waterproof</groupId>
     <artifactId>WaterProof</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <name>WaterProof</name>
     <description>Bukkit Plugin "WaterProof".</description>
     <url>http://dev.bukkit.org/server-mods/waterproof/</url>
@@ -141,6 +141,18 @@
                                 <replacement>
                                     <token>#FIELD_BLOCKFLOWING_1#</token> <!-- (World, int, int, int, int) -->
                                     <value>d</value>
+                                </replacement>
+                                <replacement>
+                                    <token>#FIELD_ITEM_1#</token> <!-- (String) -->
+                                    <value>b</value>
+                                </replacement>
+                                <replacement>
+                                    <token>#FIELD_ITEM_2#</token> <!-- (Item) -->
+                                    <value>a</value>
+                                </replacement>
+                                <replacement>
+                                    <token>#FIELD_WORLDPROVIDER_1#</token> <!-- bool -->
+                                    <value>e</value>
                                 </replacement>
                             </replacements>
                         </configuration>

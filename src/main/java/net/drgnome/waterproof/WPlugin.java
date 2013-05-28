@@ -17,6 +17,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.*;
+import net.drgnome.waterproof.inject.*;
 import static net.drgnome.waterproof.Global.*;
 
 public class WPlugin extends JavaPlugin implements Listener, Runnable
@@ -32,7 +33,7 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
     {
         super();
         _plugin = this;
-        hack();
+        inject();
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -62,11 +63,10 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
         _log.info("Disabling WaterProof " + _version);
     }
     
-    public void hack()
+    public void inject()
     {
-        Block.byId[8] = Block.byId[10] = null;
-        Block water = new BlockCustomFluid(false);
-        Block lava = new BlockCustomFluid(true);
+        BlockCustomFluid.inject();
+        ItemCustomBucket.inject();
     }
     
     public static boolean check(int id, int meta, boolean proof, boolean lava)
