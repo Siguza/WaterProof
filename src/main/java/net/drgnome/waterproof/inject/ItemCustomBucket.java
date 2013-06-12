@@ -15,7 +15,7 @@ public class ItemCustomBucket extends ItemBucket
     
     public static void inject()
     {
-        Item.byId[_ids[0]] = Item.byId[_ids[1]] = null;
+        Item.byId[_ids[0] + 256] = Item.byId[_ids[1] + 256] = null;
         new ItemCustomBucket(false);
         new ItemCustomBucket(true);
     }
