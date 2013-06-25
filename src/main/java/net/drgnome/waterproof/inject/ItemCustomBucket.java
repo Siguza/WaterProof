@@ -4,6 +4,7 @@
 
 package net.drgnome.waterproof.inject;
 
+import java.lang.reflect.*;
 import net.minecraft.server.v#MC_VERSION#.*;
 import net.drgnome.waterproof.*;
 
@@ -27,6 +28,17 @@ public class ItemCustomBucket extends ItemBucket
         #FIELD_ITEM_1#(isLava ? "bucketLava" : "bucketWater");
         #FIELD_ITEM_2#(BUCKET);
         _isLava = isLava;
+        BlockDispenser.a.a(this, BlockDispenser.a.a(isLava ? Item.LAVA_BUCKET : Item.WATER_BUCKET));
+        try
+        {
+            Field f = Item.class.getDeclaredField(isLava ? "LAVA_BUCKET" : "WATER_BUCKET");
+            f.setAccessible(true);
+            f.set(null, this);
+        }
+        catch(Throwable t)
+        {
+            t.printStackTrace();
+        }
     }
     
     public boolean a(World world, double x, double y, double z, int i, int j, int k)
