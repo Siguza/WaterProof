@@ -6,12 +6,11 @@ package net.drgnome.waterproof;
 
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 
 public class Global
 {
     public static final Logger _log = Logger.getLogger("Minecraft");
-    public static WPlugin _plugin;
     
     public static void sendMessage(CommandSender sender, String message)
     {
@@ -32,6 +31,11 @@ public class Global
         if(prefix == null)
         {
             prefix = "";
+        }
+        if(sender instanceof ConsoleCommandSender)
+        {
+            sender.sendMessage(prefix + message);
+            return;
         }
         int offset = 0;
         int xpos = 0;

@@ -1,8 +1,9 @@
-name: Waterproof
+name: WaterProof
 main: net.drgnome.waterproof.WPlugin
 version: #VERSION#
 author: Siguza
 load: STARTUP
+depend: [NBTLib]
 commands:
     waterproof:
         description: Shows the version of WaterProof

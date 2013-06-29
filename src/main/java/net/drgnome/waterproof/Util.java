@@ -21,6 +21,23 @@ public class Util
         return list.contains(meta) || list.contains(-1);
     }
     
+    public static int min(int... array)
+    {
+        if(array.length == 0)
+        {
+            return 0;
+        }
+        int value = array[0];
+        for(int tmp : array)
+        {
+            if(tmp < value)
+            {
+                value = tmp;
+            }
+        }
+        return value;
+    }
+    
     public static boolean hasUpdate(String name, String version)
     {
         try

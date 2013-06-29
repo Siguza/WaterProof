@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.drgnome.waterproof</groupId>
     <artifactId>WaterProof</artifactId>
-    <version>1.1.4</version>
+    <version>1.2.0</version>
     <name>WaterProof</name>
     <description>Bukkit Plugin "WaterProof".</description>
     <url>http://dev.bukkit.org/server-mods/waterproof/</url>
@@ -20,12 +20,23 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>siguza-repo</id>
+            <url>http://build.drgnome.net/plugin/repository/everything/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.5.2-R0.2-SNAPSHOT</version>
+            <version>1.5.2-R1.1-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.drgnome.nbtlib</groupId>
+            <artifactId>NBTLib</artifactId>
+            <version>0.3</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -81,79 +92,6 @@
                                     <token>#VERSION#</token>
                                     <value>${project.version}</value>
                                 </replacement>
-                                <replacement>
-                                    <token>#MC_VERSION#</token>
-                                    <value>1_5_R3</value>
-                                </replacement>
-                                <!-- REPLACEMENTS -->
-                                <replacement>
-                                    <token>#FIELD_BLOCK_1#</token> <!-- (float) -->
-                                    <value>c</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_2#</token> <!-- (float) -->
-                                    <value>a</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_3#</token> <!-- (int) -->
-                                    <value>k</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_4#</token> <!-- (String) -->
-                                    <value>c</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_5#</token> <!-- () -->
-                                    <value>D</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_7#</token> <!-- (IBlockAccess, int, int, int) -->
-                                    <value>c</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_8#</token> <!-- (World, int, int, int, Random) -->
-                                    <value>a</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_9#</token> <!-- final (World, int, int, int, int, int) -->
-                                    <value>c</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCK_10#</token> <!-- (World) -->
-                                    <value>a</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_WORLD_1#</token> <!-- (int, int, int, int, int, int) -->
-                                    <value>e</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_WORLD_2#</token> <!-- (int, int, int, int, int) -->
-                                    <value>a</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCKFLUIDS_1#</token> <!-- (World, int, int, int) -->
-                                    <value>k_</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_WORLDPROVIDER_1#</token> <!-- bool -->
-                                    <value>e</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_BLOCKFLOWING_1#</token> <!-- (World, int, int, int, int) -->
-                                    <value>d</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_ITEM_1#</token> <!-- (String) -->
-                                    <value>b</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_ITEM_2#</token> <!-- (Item) -->
-                                    <value>a</value>
-                                </replacement>
-                                <replacement>
-                                    <token>#FIELD_WORLDPROVIDER_1#</token> <!-- bool -->
-                                    <value>e</value>
-                                </replacement>
                             </replacements>
                         </configuration>
                     </execution>
@@ -187,6 +125,7 @@
                         <phase>post-site</phase>
                         <configuration>
                             <tasks>
+                                <delete dir="/var/www/drgnome/javadoc/waterproof"/>
                                 <copy todir="/var/www/drgnome/javadoc/waterproof">
                                     <fileset dir="${project.basedir}/apidocs" includes="**/*" />
                                 </copy>

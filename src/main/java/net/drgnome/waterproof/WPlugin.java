@@ -6,7 +6,6 @@ package net.drgnome.waterproof;
 
 import java.io.*;
 import java.util.*;
-import net.minecraft.server.v#MC_VERSION#.*;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,23 +16,31 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.*;
+import net.drgnome.nbtlib.NBTLib;
 import net.drgnome.waterproof.inject.*;
 import static net.drgnome.waterproof.Global.*;
 
 public class WPlugin extends JavaPlugin implements Listener, Runnable
 {
     public static final String _version = "#VERSION#";
+    private static WPlugin _plugin;
     private static HashMap<Integer, ArrayList<Integer>> _waterproof = new HashMap<Integer, ArrayList<Integer>>();
     private static HashMap<Integer, ArrayList<Integer>> _waterbreak = new HashMap<Integer, ArrayList<Integer>>();
     private static HashMap<Integer, ArrayList<Integer>> _lavaproof = new HashMap<Integer, ArrayList<Integer>>();
     private static HashMap<Integer, ArrayList<Integer>> _lavabreak = new HashMap<Integer, ArrayList<Integer>>();
+    private static boolean[] _bool = new boolean[10];
+    private static int[] _int = new int[8];
     private boolean _update = false;
 
     public WPlugin()
     {
         super();
         _plugin = this;
-        inject();
+    }
+    
+    public static WPlugin instance()
+    {
+        return _plugin;
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -47,9 +54,16 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
     
     public void onEnable()
     {
+        if(!NBTLib.enabled())
+        {
+            _log.warning("[WaterProof] NBTLib is not enabled!");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
         _log.info("Enabling Waterproof " + _version);
         checkFiles();
         reloadConfig();
+        inject();
         if(Config.bool("check-update"))
         {
             getServer().getPluginManager().registerEvents(this, this);
@@ -65,8 +79,8 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
     
     public void inject()
     {
-        BlockCustomFluid.inject();
-        ItemCustomBucket.inject();
+        CustomFluid.inject();
+        CustomBucket.inject();
     }
     
     public static boolean check(int id, int meta, boolean proof, boolean lava)
@@ -74,15 +88,65 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
         return Util.isBlockInList(proof ? (lava ? WPlugin._lavaproof : WPlugin._waterproof) : (lava ? WPlugin._lavabreak : WPlugin._waterbreak), id, meta);
     }
     
+    public static boolean decay(boolean lava, boolean nether)
+    {
+        return _bool[(lava ? 2 : 0) + (nether ? 1 : 0)];
+    }
+    
+    public static boolean infinite(boolean lava, boolean nether)
+    {
+        return _bool[4 + (lava ? 2 : 0) + (nether ? 1 : 0)];
+    }
+    
+    public static boolean allowCancel()
+    {
+        return _bool[8];
+    }
+    
+    public static boolean waterInNether()
+    {
+        return _bool[9];
+    }
+    
+    public static int reduction(boolean lava, boolean nether)
+    {
+        int r = _int[(lava ? 2 : 0) + (nether ? 1 : 0)];
+        return (r <= 0) ? 8 : r;
+    }
+    
+    public static int tick(boolean lava, boolean nether)
+    {
+        int r = _int[4 + (lava ? 2 : 0) + (nether ? 1 : 0)];
+        return (r <= 0) ? 10 : r;
+    }
+    
     public void reloadConfig()
     {
         super.reloadConfig();
         Config.reload();
         saveConfig();
-        WPlugin._waterproof = Config.map("water.proof");
-        WPlugin._waterbreak = Config.map("water.break");
-        WPlugin._lavaproof = Config.map("lava.proof");
-        WPlugin._lavabreak = Config.map("lava.break");
+        _waterproof = Config.map("water.proof");
+        _waterbreak = Config.map("water.break");
+        _lavaproof = Config.map("lava.proof");
+        _lavabreak = Config.map("lava.break");
+        _bool[0] = Config.bool("water.world.decay");
+        _bool[1] = Config.bool("water.nether.decay");
+        _bool[2] = Config.bool("lava.world.decay");
+        _bool[3] = Config.bool("lava.nether.decay");
+        _bool[4] = Config.bool("water.world.infinite");
+        _bool[5] = Config.bool("water.nether.infinite");
+        _bool[6] = Config.bool("lava.world.infinite");
+        _bool[7] = Config.bool("lava.nether.infinite");
+        _bool[8] = Config.bool("allow-event-cancel");
+        _bool[9] = Config.bool("allow-water-in-nether");
+        _int[0] = Config.getInt("water.world.reduction");
+        _int[1] = Config.getInt("water.nether.reduction");
+        _int[2] = Config.getInt("lava.world.reduction");
+        _int[3] = Config.getInt("lava.nether.reduction");
+        _int[4] = Config.getInt("water.world.tick");
+        _int[5] = Config.getInt("water.nether.tick");
+        _int[6] = Config.getInt("lava.world.tick");
+        _int[7] = Config.getInt("lava.nether.tick");
     }
     
     private void checkFiles()

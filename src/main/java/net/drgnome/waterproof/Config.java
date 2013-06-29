@@ -15,7 +15,7 @@ public class Config
     
     public static void reload()
     {
-        _config = _plugin.getConfig();
+        _config = WPlugin.instance().getConfig();
         setDefs();
     }
     
@@ -24,6 +24,22 @@ public class Config
         setDef("check-update", "true");
         setDef("allow-event-cancel", "true");
         setDef("allow-water-in-nether", "false");
+        setDef("water.world.decay", "true");
+        setDef("water.world.infinite", "true");
+        setDef("water.world.reduction", "1");
+        setDef("water.world.tick", "5");
+        setDef("water.nether.decay", "true");
+        setDef("water.nether.infinite", "true");
+        setDef("water.nether.reduction", "1");
+        setDef("water.nether.tick", "5");
+        setDef("lava.world.decay", "false");
+        setDef("lava.world.infinite", "false");
+        setDef("lava.world.reduction", "2");
+        setDef("lava.world.tick", "30");
+        setDef("lava.nether.decay", "false");
+        setDef("lava.nether.infinite", "false");
+        setDef("lava.nether.reduction", "1");
+        setDef("lava.nether.tick", "10");
         ArrayList<String> list = new ArrayList<String>();
         list.add("55");
         list.add("75");
@@ -39,6 +55,18 @@ public class Config
         if(!_config.isSet(path))
         {
             _config.set(path, value);
+        }
+    }
+    
+    public static int getInt(String string)
+    {
+        try
+        {
+            return Integer.parseInt(string(string));
+        }
+        catch(Throwable t)
+        {
+            return 0;
         }
     }
     
