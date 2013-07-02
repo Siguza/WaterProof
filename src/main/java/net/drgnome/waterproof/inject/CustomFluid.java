@@ -57,15 +57,17 @@ public class CustomFluid implements MethodFilter, InvocationHandler
         }
     }
     
-    public static void inject()
+    public static void inject() throws Throwable
     {
         _iWater = new CustomFluid(false);
         _iLava = new CustomFluid(true);
+        Class[] paramTypes = new Class[]{int.class, NBTLib.getMinecraftClass("Material")};
+        Object[] array = (Object[])_fields[0].get(null);
+        Object tmpWater = array[_idWater];
+        Object tmpLava = array[_idLava];
+        array[_idWater] = array[_idLava] = null;
         try
         {
-            Class[] paramTypes = new Class[]{int.class, NBTLib.getMinecraftClass("Material")};
-            Object[] array = (Object[])_fields[0].get(null);
-            array[_idWater] = array[_idLava] = null;
             _iWater._proxy = ClassProxy.newInstance(_classes[0], _iWater, _iWater, paramTypes, _idWater, NBTLib.fetchMinecraftField("Material", null, "WATER"));
             _iLava._proxy = ClassProxy.newInstance(_classes[0], _iLava, _iLava, paramTypes, _idLava, NBTLib.fetchMinecraftField("Material", null, "LAVA"));
             if(array[_idWater].getClass().getDeclaredMethods().length != 3)
@@ -85,16 +87,14 @@ public class CustomFluid implements MethodFilter, InvocationHandler
             NBTLib.putMinecraftField("Block", array[_idLava], "durability", 0F);
             ((int[])NBTLib.fetchMinecraftField("Block", null, "lightBlock"))[_idWater] = 3;
             ((int[])NBTLib.fetchMinecraftField("Block", null, "lightEmission"))[_idLava] = 15;
-            NBTLib.putMinecraftField("Block", array[_idWater], "cD", false); // Derpnote
-            NBTLib.putMinecraftField("Block", array[_idLava], "cD", false); // Derpnote
-        }
-        catch(AssertionError e)
-        {
-            throw e;
+            NBTLib.putMinecraftField("Block", array[_idWater], "cJ", false); // Derpnote
+            NBTLib.putMinecraftField("Block", array[_idLava], "cJ", false); // Derpnote
         }
         catch(Throwable t)
         {
-            t.printStackTrace();
+            array[_idWater] = tmpWater;
+            array[_idLava] = tmpLava;
+            throw t;
         }
     }
 

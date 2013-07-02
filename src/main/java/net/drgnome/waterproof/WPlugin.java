@@ -79,8 +79,16 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
     
     public void inject()
     {
-        CustomFluid.inject();
-        CustomBucket.inject();
+        try
+        {
+            CustomFluid.inject();
+            CustomBucket.inject();
+        }
+        catch(Throwable t)
+        {
+            t.printStackTrace();
+            getPluginLoader().disablePlugin(this);
+        }
     }
     
     public static boolean check(int id, int meta, boolean proof, boolean lava)
