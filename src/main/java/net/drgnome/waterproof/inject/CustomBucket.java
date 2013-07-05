@@ -5,7 +5,6 @@
 package net.drgnome.waterproof.inject;
 
 import java.lang.reflect.*;
-//import net.minecraft.server.v1_5_R3.*;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,7 +13,6 @@ import net.drgnome.waterproof.*;
 
 public class CustomBucket implements MethodFilter, InvocationHandler
 {
-    //private static final int[] _ids = {70, 71};
     private static final int[] _id = {Material.BUCKET.getId(), Material.WATER_BUCKET.getId(), Material.LAVA_BUCKET.getId()};
     private static final Class[] _classes = new Class[1];
     private static final Method[] _methods = new Method[1];
@@ -89,7 +87,7 @@ public class CustomBucket implements MethodFilter, InvocationHandler
     {
         try
         {
-            return click(args[0], (Integer)args[4], (Integer)args[5], (Integer)args[6]);
+            return click(args[0], (Integer)args[1], (Integer)args[2], (Integer)args[3]);
         }
         catch(InvocationTargetException e)
         {
