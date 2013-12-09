@@ -39,37 +39,31 @@ public class CustomBucket implements MethodFilter, InvocationHandler
         CustomBucket lava = new CustomBucket(true);
         Method mGet = NBTLib.getMethod(NBTLib.getMinecraftClass("IRegistry"), Object.class, Object.class); // Derpnote
         Method mPut = NBTLib.getMethod(NBTLib.getMinecraftClass("IRegistry"), void.class, Object.class, Object.class); // Derpnote
-        Object[] array = (Object[])NBTLib.fetchMinecraftField("Item", null, "byId");
-        Object tmpWater = array[_id[1]];
-        Object tmpLava = array[_id[2]];
-        array[_id[1]] = array[_id[2]] = null;
-        try
+        Class clazz = NBTLib.getMinecraftClass("Block");
+        Object proxyW = ClassProxy.newInstance(_classes[0], water, water, new Class[]{clazz}, CustomFluid._iWater._proxy);
+        Object proxyL = ClassProxy.newInstance(_classes[0], lava, lava, new Class[]{clazz}, CustomFluid._iLava._proxy);
+        if(proxyW.getClass().getDeclaredMethods().length != 2)
         {
-            ClassProxy.newInstance(_classes[0], water, water, new Class[]{int.class, int.class}, _id[1] - 256, CustomFluid._idWater);
-            ClassProxy.newInstance(_classes[0], lava, lava, new Class[]{int.class, int.class}, _id[2] - 256, CustomFluid._idLava);
-            if(array[_id[1]].getClass().getDeclaredMethods().length != 2)
+            String s = "[WaterProof] Item proxy class has the wrong amount of methods (" + proxyW.getClass().getDeclaredMethods().length + ")! Methods:";
+            for(Method m : proxyW.getClass().getDeclaredMethods())
             {
-                String s = "[WaterProof] Item proxy class has the wrong amount of methods (" + array[_id[1]].getClass().getDeclaredMethods().length + ")! Methods:";
-                for(Method m : array[_id[1]].getClass().getDeclaredMethods())
-                {
-                    s += " " + m.getName() + "(),";
-                }
-                throw new AssertionError(s);
+                s += " " + m.getName() + "(),";
             }
-            NBTLib.putMinecraftField("Item", array[_id[1]], "name", "bucketWater");
-            NBTLib.putMinecraftField("Item", array[_id[2]], "name", "bucketLava");
-            NBTLib.putMinecraftField("Item", array[_id[1]], "craftingResult", array[_id[0]]);
-            NBTLib.putMinecraftField("Item", array[_id[2]], "craftingResult", array[_id[0]]);
-            Object registry = NBTLib.fetchDynamicMinecraftField("BlockDispenser", null, NBTLib.getMinecraftClass("IRegistry"));
-            mPut.invoke(registry, array[_id[1]], mGet.invoke(registry, tmpWater));
-            mPut.invoke(registry, array[_id[2]], mGet.invoke(registry, tmpLava));
+            throw new AssertionError(s);
         }
-        catch(Throwable t)
-        {
-            array[_id[1]] = tmpWater;
-            array[_id[2]] = tmpLava;
-            throw t;
-        }
+        NBTLib.putMinecraftField("Item", proxyW, "name", "bucketWater");
+        NBTLib.putMinecraftField("Item", proxyL, "name", "bucketLava");
+        Object bucket = NBTLib.invokeMinecraft("Item", null, "d", new Class[]{int.class}, _id[0]); // Derpnote
+        NBTLib.putMinecraftField("Item", proxyW, "craftingResult", bucket);
+        NBTLib.putMinecraftField("Item", proxyL, "craftingResult", bucket);
+        Object dispenserRegistry = NBTLib.fetchDynamicMinecraftField("BlockDispenser", null, NBTLib.getMinecraftClass("IRegistry"));
+        mPut.invoke(dispenserRegistry, proxyW, mGet.invoke(dispenserRegistry, NBTLib.invokeMinecraft("Item", null, "d", new Class[]{int.class}, _id[1]))); // Derpnote
+        mPut.invoke(dispenserRegistry, proxyL, mGet.invoke(dispenserRegistry, NBTLib.invokeMinecraft("Item", null, "d", new Class[]{int.class}, _id[2])));
+        Object registry = NBTLib.fetchMinecraftField("Item", null, "REGISTRY");
+        NBTLib.invokeMinecraft("RegistryMaterials", registry, "a", new Class[]{int.class, String.class, Object.class}, _id[1], "water_bucket", proxyW);
+        NBTLib.invokeMinecraft("RegistryMaterials", registry, "a", new Class[]{int.class, String.class, Object.class}, _id[2], "lava_bucket", proxyL);
+        /*NBTLib.putMinecraftField("Items", null, "WATER_BUCKET", proxyW);
+        NBTLib.putMinecraftField("Items", null, "LAVA_BUCKET", proxyL);*/
     }
     
     public CustomBucket(boolean isLava)

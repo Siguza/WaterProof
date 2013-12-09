@@ -23,31 +23,33 @@ public class CustomFluid implements MethodFilter, InvocationHandler
     private static final int[] _proof = new int[]{Material.WOODEN_DOOR.getId(), Material.IRON_DOOR_BLOCK.getId(), Material.SIGN_POST.getId(), Material.LADDER.getId(), Material.SUGAR_CANE_BLOCK.getId(), Material.PORTAL.getId(), Material.ENDER_PORTAL.getId()};
     private static final BlockFace[] _faces = new BlockFace[] { BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH };
     private static final Class[] _classes = new Class[4];
-    private static final Method[] _methods = new Method[6];
+    private static final Method[] _methods = new Method[8];
     private static final Field[] _fields = new Field[2];
     static CustomFluid _iWater;
     static CustomFluid _iLava;
     private final boolean _isLava;
     private final int _blockID;
-    private Object _proxy;
+    Object _proxy;
     private int _sources = 0;
     
     static
     {
         try
         {
+            Class clazz = NBTLib.getMinecraftClass("Block");
             _classes[0] = NBTLib.getMinecraftClass("BlockFlowing");
             _classes[1] = NBTLib.getMinecraftClass("World");
             _classes[2] = NBTLib.getMinecraftClass("Material");
             _classes[3] = NBTLib.getMinecraftClass("BlockFluids");
             _methods[0] = NBTLib.getMethod(_classes[1], "getWorld");
-            _methods[1] = NBTLib.getMethod(_classes[1], "a", int.class, int.class, int.class, int.class, int.class); // Derpnote
-            _methods[2] = NBTLib.getMethod(_classes[1], "applyPhysics", int.class, int.class, int.class, int.class);
+            _methods[1] = NBTLib.getMethod(_classes[1], "a", int.class, int.class, int.class, clazz, int.class); // Derpnote
+            _methods[2] = NBTLib.getMethod(_classes[1], "applyPhysics", int.class, int.class, int.class, clazz);
             _methods[3] = NBTLib.getMethod(_classes[2], "isBuildable");
             _methods[4] = NBTLib.getMethod(_classes[2], "isSolid");
             _methods[5] = NBTLib.getMethod(_classes[3], "fizz", _classes[1], int.class, int.class, int.class);
-            Class clazz = NBTLib.getMinecraftClass("Block");
-            _fields[0] = NBTLib.getField(clazz, "byId");
+            _methods[6] = NBTLib.getMethod(NBTLib.getMinecraftClass("RegistryMaterials"), "a", int.class, String.class, Object.class);
+            _methods[7] = NBTLib.getMethod(NBTLib.getMinecraftClass("Block"), "e", int.class); // Derpnote
+            _fields[0] = NBTLib.getField(clazz, "REGISTRY");
             _fields[1] = NBTLib.getField(clazz, _classes[2]);
         }
         catch(Throwable t)
@@ -61,41 +63,35 @@ public class CustomFluid implements MethodFilter, InvocationHandler
     {
         _iWater = new CustomFluid(false);
         _iLava = new CustomFluid(true);
-        Class[] paramTypes = new Class[]{int.class, NBTLib.getMinecraftClass("Material")};
-        Object[] array = (Object[])_fields[0].get(null);
-        Object tmpWater = array[_idWater];
-        Object tmpLava = array[_idLava];
-        array[_idWater] = array[_idLava] = null;
-        try
+        Class[] paramTypes = new Class[]{NBTLib.getMinecraftClass("Material")};
+        Object proxyW = ClassProxy.newInstance(_classes[0], _iWater, _iWater, paramTypes, NBTLib.fetchMinecraftField("Material", null, "WATER"));
+        Object proxyL = ClassProxy.newInstance(_classes[0], _iLava, _iLava, paramTypes, NBTLib.fetchMinecraftField("Material", null, "LAVA"));
+        _iWater._proxy = proxyW;
+        _iLava._proxy = proxyL;
+        if(proxyW.getClass().getDeclaredMethods().length != 3)
         {
-            _iWater._proxy = ClassProxy.newInstance(_classes[0], _iWater, _iWater, paramTypes, _idWater, NBTLib.fetchMinecraftField("Material", null, "WATER"));
-            _iLava._proxy = ClassProxy.newInstance(_classes[0], _iLava, _iLava, paramTypes, _idLava, NBTLib.fetchMinecraftField("Material", null, "LAVA"));
-            if(array[_idWater].getClass().getDeclaredMethods().length != 3)
+            String s = "[WaterProof] Fluid proxy class has the wrong amount of methods (" + proxyW.getClass().getDeclaredMethods().length + ")! Methods:";
+            for(Method m : proxyW.getClass().getDeclaredMethods())
             {
-                String s = "[WaterProof] Fluid proxy class has the wrong amount of methods (" + array[_idWater].getClass().getDeclaredMethods().length + ")! Methods:";
-                for(Method m : array[_idWater].getClass().getDeclaredMethods())
-                {
-                    s += " " + m.getName() + "(),";
-                }
-                throw new AssertionError(s);
+                s += " " + m.getName() + "(),";
             }
-            NBTLib.putMinecraftField("Block", array[_idWater], "name", "water");
-            NBTLib.putMinecraftField("Block", array[_idLava], "name", "lava");
-            NBTLib.putMinecraftField("Block", array[_idWater], "strength", 100F);
-            NBTLib.putMinecraftField("Block", array[_idLava], "strength", 0F);
-            NBTLib.putMinecraftField("Block", array[_idWater], "durability", 500F);
-            NBTLib.putMinecraftField("Block", array[_idLava], "durability", 0F);
-            ((int[])NBTLib.fetchMinecraftField("Block", null, "lightBlock"))[_idWater] = 3;
-            ((int[])NBTLib.fetchMinecraftField("Block", null, "lightEmission"))[_idLava] = 15;
-            NBTLib.putMinecraftField("Block", array[_idWater], "cJ", false); // Derpnote
-            NBTLib.putMinecraftField("Block", array[_idLava], "cJ", false); // Derpnote
+            throw new AssertionError(s);
         }
-        catch(Throwable t)
-        {
-            array[_idWater] = tmpWater;
-            array[_idLava] = tmpLava;
-            throw t;
-        }
+        NBTLib.putMinecraftField("Block", proxyW, "name", "water");
+        NBTLib.putMinecraftField("Block", proxyL, "name", "lava");
+        NBTLib.putMinecraftField("Block", proxyW, "strength", 100F);
+        NBTLib.putMinecraftField("Block", proxyL, "strength", 0F);
+        NBTLib.putMinecraftField("Block", proxyW, "durability", 500F);
+        NBTLib.putMinecraftField("Block", proxyL, "durability", 0F);
+        NBTLib.putMinecraftField("Block", proxyW, "r", 3); // Derpnote
+        NBTLib.putMinecraftField("Block", proxyL, "t", 15); // Derpnote
+        NBTLib.putMinecraftField("Block", proxyW, "y", false); // Derpnote
+        NBTLib.putMinecraftField("Block", proxyL, "y", false); // Derpnote
+        Object registry = _fields[0].get(null);
+        _methods[6].invoke(registry, _idWater, "flowing_water", proxyW);
+        _methods[6].invoke(registry, _idLava, "flowing_lava", proxyL);
+        /*NBTLib.putMinecraftField("Blocks", null, "WATER", proxyW);
+        NBTLib.putMinecraftField("Blocks", null, "LAVA", proxyL);*/
     }
 
     private CustomFluid(boolean isLava)
@@ -146,7 +142,6 @@ public class CustomFluid implements MethodFilter, InvocationHandler
     
     private void update(Object mcWorld, int x, int y, int z, Random rand) throws Throwable
     {
-        //System.out.println("[WP] " + x + "/" + y + "/" + z);
         World world = (World)_methods[0].invoke(mcWorld);
         Block block = world.getBlockAt(x, y, z);
         int meta = getMeta(world, x, y, z);
@@ -189,8 +184,8 @@ public class CustomFluid implements MethodFilter, InvocationHandler
                     else
                     {
                         block.setData((byte)meta, false);
-                        _methods[1].invoke(mcWorld, x, y, z, _blockID, WPlugin.tick(_isLava, isHell));
-                        _methods[2].invoke(mcWorld, x, y, z, _blockID);
+                        _methods[1].invoke(mcWorld, x, y, z, _proxy, WPlugin.tick(_isLava, isHell));
+                        _methods[2].invoke(mcWorld, x, y, z, _proxy);
                     }
                 }
             }
@@ -340,7 +335,7 @@ public class CustomFluid implements MethodFilter, InvocationHandler
     
     static boolean isSolid(int id, boolean flag) throws Throwable
     {
-        Object o = ((Object[])_fields[0].get(null))[id];
+        Object o = _methods[7].invoke(null, id);
         return (o == null) ? false : ((Boolean)_methods[flag ? 3 : 4].invoke(_fields[1].get(o)));
     }
     
