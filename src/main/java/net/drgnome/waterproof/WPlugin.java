@@ -9,7 +9,8 @@ import java.util.*;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
@@ -23,6 +24,7 @@ import static net.drgnome.waterproof.Global.*;
 public class WPlugin extends JavaPlugin implements Listener, Runnable
 {
     public static final String _version = "#VERSION#";
+    public static final int _projectID = 43260; // Bukkit
     private static WPlugin _plugin;
     private static HashMap<Integer, ArrayList<Integer>> _waterproof = new HashMap<Integer, ArrayList<Integer>>();
     private static HashMap<Integer, ArrayList<Integer>> _waterbreak = new HashMap<Integer, ArrayList<Integer>>();
@@ -43,12 +45,12 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
         return _plugin;
     }
     
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void handleLogin(PlayerLoginEvent event)
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void handleLogin(PlayerJoinEvent event)
     {
-        if(event.getPlayer().hasPermission("waterproof.all"))
+        if(_update)
         {
-            sendMessage(event.getPlayer(), "There is an update for WaterProof available!", ChatColor.GOLD);
+            tellPlayerUpdate(event.getPlayer());
         }
     }
     
@@ -188,7 +190,7 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
         if((args.length <= 0) || (args[0].equalsIgnoreCase("help")))
         {
             sendMessage(sender, "/waterproof version - Shows the current version", ChatColor.AQUA);
-            sendMessage(sender, "/waterproof reload - Reload the configs", ChatColor.AQUA);
+            sendMessage(sender, "/waterproof reload - Reload the config", ChatColor.AQUA);
             return true;
         }
         if(args[0].equalsIgnoreCase("version"))
@@ -198,7 +200,7 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
         else if(args[0].equalsIgnoreCase("reload"))
         {
             reloadConfig();
-            sendMessage(sender, "WaterProof configs reloaded.", ChatColor.GREEN);
+            sendMessage(sender, "WaterProof config reloaded.", ChatColor.GREEN);
         }
         return true;
     }
@@ -208,12 +210,25 @@ public class WPlugin extends JavaPlugin implements Listener, Runnable
         if(checkUpdate())
         {
             getServer().getScheduler().cancelTasks(this);
+            _log.info(ChatColor.GOLD + "[WaterProof] There is an update available!");
+            for(Player p : Bukkit.getOnlinePlayers())
+            {
+                tellPlayerUpdate(p);
+            }
         }
     }
     
     public boolean checkUpdate()
     {
-        _update = Util.hasUpdate("waterproof", _version);
+        _update = Util.hasUpdate(_projectID, _version);
         return _update;
+    }
+    
+    private static void tellPlayerUpdate(Player p)
+    {
+        if(p.hasPermission("waterproof.all"))
+        {
+            sendMessage(p, "There is an update for WaterProof available!", ChatColor.GOLD);
+        }
     }
 }
